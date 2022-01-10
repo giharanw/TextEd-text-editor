@@ -17,7 +17,7 @@ public class AppInitializer extends Application {
         primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/MainForm.fxml"))));
         primaryStage.setTitle(MainFormController.setFileName());
         primaryStage.setMinHeight(800);
-        primaryStage.setMinWidth(1000);
+        primaryStage.setMinWidth(800);
         primaryStage.show();
     }
 }

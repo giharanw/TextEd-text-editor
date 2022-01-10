@@ -59,7 +59,7 @@ public class MainFormController {
         newFile.setOnAction(event ->{
             Stage stage = new Stage();
             stage.setMinHeight(800);
-            stage.setMinWidth(1000);
+            stage.setMinWidth(800);
             try {
                 stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/MainForm.fxml"))));
             } catch (IOException e) {

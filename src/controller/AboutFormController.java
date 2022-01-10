@@ -17,7 +17,9 @@ public class AboutFormController {
 //        anchorPaneAbout.setVisible(false);
         Stage stage = (Stage) anchorPaneAbout.getScene().getWindow();
         stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/MainForm.fxml"))));
-        stage.setTitle("TextEd, A simple text editor");
+        stage.setTitle(MainFormController.setFileName());
+        stage.setMinHeight(800);
+        stage.setMinWidth(800);
         stage.show();
     }
 }
