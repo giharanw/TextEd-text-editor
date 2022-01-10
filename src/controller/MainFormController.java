@@ -1,10 +1,9 @@
 package controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.AnchorPane;
@@ -23,6 +22,21 @@ public class MainFormController {
     public MenuBar menuBar;
     public TextArea txtArea;
     public AnchorPane anchorPaneMainForm;
+    public Button btnNewFile;
+    public Button btnOpenFile;
+    public Button btnSaveFile;
+    public Button btnCut;
+    public Button btnCopy;
+    public Button btnPaste;
+    public TextField txtFind;
+    public TextField txtReplace;
+    public Button btnUpArrow;
+    public Button btnDownArrow;
+    public Button btnReplace;
+    public ToggleButton btnRegex;
+    public ToggleButton btnCaseSensitive;
+    public Label lblWordCount;
+    public Label lblFindCount;
     public static int untitledFileCount = 1;
 
     public void initialize() {
@@ -55,6 +69,13 @@ public class MainFormController {
 
         menuBar.getMenus().get(2).getItems().add(about);
         menuBar.getMenus().get(2).getItems().remove(0);
+
+        btnNewFile.setTooltip(new Tooltip("New"));
+        btnOpenFile.setTooltip(new Tooltip("Open"));
+        btnSaveFile.setTooltip(new Tooltip("Save"));
+        btnCut.setTooltip(new Tooltip("Cut"));
+        btnCopy.setTooltip(new Tooltip("Copy"));
+        btnPaste.setTooltip(new Tooltip("Paste"));
 
         newFile.setOnAction(event ->{
             Stage stage = new Stage();
@@ -159,5 +180,38 @@ public class MainFormController {
         inputStream.read(fileBytes);
         String fileContent=new String(fileBytes);
         txtArea.setText(fileContent);
+    }
+
+    public void btnNewFileClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnOpenFileClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnSaveFileClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnCutClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnCopyClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnPasteClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnDownArrowClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnUpArrowClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnReplaceClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnRegexClickOnAction(ActionEvent actionEvent) {
+    }
+
+    public void btnCaseSensitiveClickOnAction(ActionEvent actionEvent) {
     }
 }
