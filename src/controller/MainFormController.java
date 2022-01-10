@@ -17,6 +17,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainFormController {
     public MenuBar menuBar;
@@ -38,6 +41,12 @@ public class MainFormController {
     public Label lblWordCount;
     public Label lblFindCount;
     public static int untitledFileCount = 1;
+
+    Path currentPath;
+    boolean txtChanged=false;
+    Matcher matcher;
+    ArrayList<Integer> referBack = new ArrayList();
+    ArrayList<Integer> referForward = new ArrayList();
 
     public void initialize() {
 
@@ -78,69 +87,42 @@ public class MainFormController {
         btnPaste.setTooltip(new Tooltip("Paste"));
 
         newFile.setOnAction(event ->{
-            Stage stage = new Stage();
-            stage.setMinHeight(800);
-            stage.setMinWidth(800);
-            try {
-                stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/MainForm.fxml"))));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            stage.setTitle(setFileName());
-            stage.show();
+            btnNewFile.fire();
         });
         open.setOnAction(event -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open a file");
-            fileChooser.getExtensionFilters().
-                    add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-            File file = fileChooser.showOpenDialog(null);
-            try {
-                readData(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            btnOpenFile.fire();
         });
         save.setOnAction(event -> {
-            FileChooser fileChooser=new FileChooser();
-            fileChooser.setTitle("Select a destination");
-            File file = fileChooser.showSaveDialog(null);
-            try {
-                saveFile(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            btnSaveFile.fire();
         });
-        print.setOnAction(event -> {});
+        print.setOnAction(event -> {
+            //---------------Print text file-----------------
+        });
         exit.setOnAction(event -> {
             System.exit(0);
         });
 
         cut.setOnAction(event -> {
-            if(txtArea.getSelectedText()!=null){
-                Clipboard systemClipboard = Clipboard.getSystemClipboard();
-                ClipboardContent clipboardContent = new ClipboardContent();
-                clipboardContent.putString(txtArea.getSelectedText());
-                systemClipboard.setContent(clipboardContent);
-                txtArea.setText(txtArea.getText().replaceAll(clipboardContent.getString(),""));
-            }
+            btnCut.fire();
         });
         copy.setOnAction(event -> {
-            if(txtArea.getSelectedText()!=null){
-                Clipboard systemClipboard = Clipboard.getSystemClipboard();
-                ClipboardContent clipboardContent = new ClipboardContent();
-                clipboardContent.putString(txtArea.getSelectedText());
-                systemClipboard.setContent(clipboardContent);
-            }
+            btnCopy.fire();
         });
         paste.setOnAction(event -> {
-            Clipboard pasteClip=Clipboard.getSystemClipboard();
-            int caretPosition = txtArea.getCaretPosition();
-            txtArea.insertText(caretPosition, pasteClip.getString());
+            btnPaste.fire();
         });
         selectAll.setOnAction(event -> {
             txtArea.selectAll();
+        });
+
+        txtArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            setWordCount();
+            txtChanged=true;
+            findWords();
+        });
+
+        txtFind.textProperty().addListener((observable, oldValue, newValue) -> {
+            findWords();
         });
 
         about.setOnAction(event -> {
@@ -158,13 +140,11 @@ public class MainFormController {
         });
     }
 
-
     public static String setFileName(){
         String fileName="Untitled document"+untitledFileCount;
         untitledFileCount++;
         return fileName;
     }
-
 
     private void saveFile(File file) throws IOException {
         Path path = Paths.get(String.valueOf(file));
@@ -175,43 +155,164 @@ public class MainFormController {
 
     private void readData(File file) throws IOException {
         Path path = Paths.get(String.valueOf(file));
-        InputStream inputStream = Files.newInputStream(path);
-        byte[] fileBytes = new byte[inputStream.available()];
-        inputStream.read(fileBytes);
-        String fileContent=new String(fileBytes);
-        txtArea.setText(fileContent);
+        try {
+            InputStream inputStream = Files.newInputStream(path);
+            byte[] fileBytes = new byte[inputStream.available()];
+            inputStream.read(fileBytes);
+            String fileContent=new String(fileBytes);
+            txtArea.setText(fileContent);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void btnNewFileClickOnAction(ActionEvent actionEvent) {
+        Stage stage = new Stage();
+        stage.setMinHeight(800);
+        stage.setMinWidth(800);
+        try {
+            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/MainForm.fxml"))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        stage.setTitle(setFileName());
+        stage.show();
     }
 
     public void btnOpenFileClickOnAction(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open a file");
+        fileChooser.getExtensionFilters().
+                add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File file = fileChooser.showOpenDialog(null);
+        try {
+            readData(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void btnSaveFileClickOnAction(ActionEvent actionEvent) {
+        FileChooser fileChooser=new FileChooser();
+        fileChooser.setTitle("Select a destination");
+        File file = fileChooser.showSaveDialog(null);
+        try {
+            saveFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void btnCutClickOnAction(ActionEvent actionEvent) {
+        if(txtArea.getSelectedText()!=null){
+            Clipboard systemClipboard = Clipboard.getSystemClipboard();
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString(txtArea.getSelectedText());
+            systemClipboard.setContent(clipboardContent);
+            txtArea.setText(txtArea.getText().replaceAll(clipboardContent.getString(),""));
+        }
     }
 
     public void btnCopyClickOnAction(ActionEvent actionEvent) {
+        if(txtArea.getSelectedText()!=null){
+            Clipboard systemClipboard = Clipboard.getSystemClipboard();
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString(txtArea.getSelectedText());
+            systemClipboard.setContent(clipboardContent);
+        }
     }
 
     public void btnPasteClickOnAction(ActionEvent actionEvent) {
+        Clipboard pasteClip=Clipboard.getSystemClipboard();
+        int caretPosition = txtArea.getCaretPosition();
+        txtArea.insertText(caretPosition, pasteClip.getString());
+    }
+
+    private void findWords() {
+        if (!txtFind.getText().isEmpty()){
+            if (txtChanged){
+                int flag=0;
+                if (!btnCaseSensitive.isSelected()){
+                    flag=flag | Pattern.CASE_INSENSITIVE;
+                }
+                if (!btnRegex.isSelected()){
+                    flag=flag | Pattern.LITERAL;
+                }
+                matcher = Pattern.compile(txtFind.getText(),flag).matcher(txtArea.getText());
+                foundedWords();
+                txtChanged=false;
+                System.gc();
+            }
+            if (referForward.size()>2){
+                txtArea.selectRange(referForward.get(referForward.size()-4),referForward.get(referForward.size()-3));
+                referForward.remove(referForward.size()-4);
+                referForward.remove(referForward.size()-3);
+
+            }else if(matcher.find()){
+                referForward.clear();
+                txtArea.selectRange(matcher.start(),matcher.end());
+                referBack.add(matcher.start());
+                referBack.add(matcher.end());
+            }else {
+                matcher.reset();
+            }
+        }
+    }
+
+    private void setWordCount() {
+        if(txtArea.getText().isEmpty()){
+            lblWordCount.setText(String.valueOf(0));
+            return;
+        }
+        int count=0;
+        Matcher matcher = Pattern.compile("\\S+").matcher(txtArea.getText());
+        while(matcher.find()){
+            count++;
+        }
+        lblWordCount.setText(String.valueOf(count));
+    }
+
+    private void foundedWords() {
+        int count =0;
+        if(matcher!=null){
+            while(matcher.find()){
+                count++;
+            }
+            matcher.reset();
+            lblFindCount.setText(String.valueOf(count));
+        }
     }
 
     public void btnDownArrowClickOnAction(ActionEvent actionEvent) {
+        findWords();
     }
 
     public void btnUpArrowClickOnAction(ActionEvent actionEvent) {
+        if (referForward.size()==0){
+            referForward.add(referBack.get(referBack.size()-2));
+            referForward.add(referBack.get(referBack.size()-1));
+        }
+        txtArea.selectRange(referBack.get((referBack.size())-4),referBack.get((referBack.size()-3)));
+        referForward.add(referBack.get((referBack.size()-4)));
+        referForward.add(referBack.get((referBack.size()-3)));
+        referBack.remove(referBack.size()-4);
+        referBack.remove(referBack.size()-3);
     }
 
     public void btnReplaceClickOnAction(ActionEvent actionEvent) {
+        if (!txtFind.getText().isEmpty()){
+            txtArea.setText(txtArea.getText().replaceAll(txtFind.getText(),txtReplace.getText()));
+        }
     }
 
     public void btnRegexClickOnAction(ActionEvent actionEvent) {
+        txtChanged=true;
+        findWords();
     }
 
     public void btnCaseSensitiveClickOnAction(ActionEvent actionEvent) {
+        txtChanged=true;
+        findWords();
     }
 }

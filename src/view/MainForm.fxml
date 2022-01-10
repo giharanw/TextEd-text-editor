@@ -90,8 +90,8 @@
                   </ImageView>
                </graphic>
             </Button>
-            <TextField fx:id="txtFind" layoutX="608.0" layoutY="1.0" prefHeight="30.0" prefWidth="217.0" style="-fx-border-color: #1994ff#1994ff;" AnchorPane.rightAnchor="195.0" />
-            <TextField fx:id="txtReplace" layoutX="634.0" layoutY="30.0" prefHeight="30.0" prefWidth="217.0" style="-fx-border-color: #1994ff#1994ff;" AnchorPane.rightAnchor="195.0" />
+            <TextField fx:id="txtFind" layoutX="608.0" layoutY="1.0" prefHeight="30.0" prefWidth="217.0" promptText="Find text here" style="-fx-border-color: #1994ff#1994ff;" AnchorPane.rightAnchor="195.0" />
+            <TextField fx:id="txtReplace" layoutX="634.0" layoutY="30.0" prefHeight="30.0" prefWidth="217.0" promptText="Replace text here" style="-fx-border-color: #1994ff#1994ff;" AnchorPane.rightAnchor="195.0" />
             <Button fx:id="btnUpArrow" layoutX="805.0" layoutY="-1.0" mnemonicParsing="false" onAction="#btnUpArrowClickOnAction" style="-fx-background-color: #9cd1ff; -fx-background-radius: 10; -fx-border-color: #ffffff;" AnchorPane.rightAnchor="157.0">
                <graphic>
                   <ImageView fitHeight="18.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
