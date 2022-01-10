@@ -23,6 +23,7 @@ public class MainFormController {
     public MenuBar menuBar;
     public TextArea txtArea;
     public AnchorPane anchorPaneMainForm;
+    public static int untitledFileCount = 1;
 
     public void initialize() {
 
@@ -55,19 +56,18 @@ public class MainFormController {
         menuBar.getMenus().get(2).getItems().add(about);
         menuBar.getMenus().get(2).getItems().remove(0);
 
-//        MenuItem about = menuBar.getMenus().get(2).getItems().get(0);
-
         newFile.setOnAction(event ->{
-
             Stage stage = new Stage();
+            stage.setMinHeight(800);
+            stage.setMinWidth(1000);
             try {
                 stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/MainForm.fxml"))));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            stage.setTitle(setFileName());
             stage.show();
         });
-
         open.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open a file");
@@ -80,7 +80,6 @@ public class MainFormController {
                 e.printStackTrace();
             }
         });
-
         save.setOnAction(event -> {
             FileChooser fileChooser=new FileChooser();
             fileChooser.setTitle("Select a destination");
@@ -90,14 +89,11 @@ public class MainFormController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
 
+        });
+        print.setOnAction(event -> {});
         exit.setOnAction(event -> {
             System.exit(0);
-        });
-
-        selectAll.setOnAction(event -> {
-            txtArea.selectAll();
         });
 
         cut.setOnAction(event -> {
@@ -109,7 +105,6 @@ public class MainFormController {
                 txtArea.setText(txtArea.getText().replaceAll(clipboardContent.getString(),""));
             }
         });
-
         copy.setOnAction(event -> {
             if(txtArea.getSelectedText()!=null){
                 Clipboard systemClipboard = Clipboard.getSystemClipboard();
@@ -118,10 +113,13 @@ public class MainFormController {
                 systemClipboard.setContent(clipboardContent);
             }
         });
-
         paste.setOnAction(event -> {
             Clipboard pasteClip=Clipboard.getSystemClipboard();
-            txtArea.setText(txtArea.getText()+pasteClip.getString());
+            int caretPosition = txtArea.getCaretPosition();
+            txtArea.insertText(caretPosition, pasteClip.getString());
+        });
+        selectAll.setOnAction(event -> {
+            txtArea.selectAll();
         });
 
         about.setOnAction(event -> {
@@ -138,6 +136,15 @@ public class MainFormController {
             stage.show();
         });
     }
+
+
+    public static String setFileName(){
+        String fileName="Untitled document"+untitledFileCount;
+        untitledFileCount++;
+        return fileName;
+    }
+
+
     private void saveFile(File file) throws IOException {
         Path path = Paths.get(String.valueOf(file));
         OutputStream outputStream = Files.newOutputStream(path);
