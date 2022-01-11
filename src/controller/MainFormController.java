@@ -122,6 +122,7 @@ public class MainFormController {
         });
 
         txtFind.textProperty().addListener((observable, oldValue, newValue) -> {
+            txtChanged=true;
             findWords();
         });
 
